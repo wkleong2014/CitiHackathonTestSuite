@@ -19,10 +19,12 @@ import citi.hackathon.entity.Sample;
 public class CitiHackathonTestSuite {
 	private static final Logger LOG = LoggerFactory.getLogger(CitiHackathonTestSuite.class);
 	private RestTemplate restTemplate = new RestTemplate();
+	private static String reportUrl;
 	
 	@BeforeClass
 	public static void initialiseTest() {
-		LOG.info("Initialising Test for URL: [{}]" ,SpringConfig.getReportUrl());
+		reportUrl = SpringConfig.getReportUrl();
+		LOG.info("Initialising Test for URL: [{}]", reportUrl);
 	}
 	
 	@Test
@@ -50,7 +52,7 @@ public class CitiHackathonTestSuite {
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity <String> entity = new HttpEntity<String>(headers);
 		
-		Sample result = restTemplate.exchange(SpringConfig.getReportUrl() + "/sample", HttpMethod.GET, entity, Sample.class).getBody();
+		Sample result = restTemplate.exchange(reportUrl + "/sample", HttpMethod.GET, entity, Sample.class).getBody();
 		Assert.assertEquals(new Sample("Sample Username", "Sample Password").getUsername(), result.getUsername());
 	}
 }

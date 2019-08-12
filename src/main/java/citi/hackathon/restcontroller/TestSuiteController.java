@@ -20,9 +20,8 @@ public class TestSuiteController {
 	
 	@RequestMapping("/testsuite")
 	public JunitReport testSuite(@RequestParam(value="url") String url) {
-		SpringConfig.setReportUrl(url);
-		
 		JUnitCore junit = new JUnitCore();
+		SpringConfig.setReportUrl(url);
 		Result result = junit.run(ParallelComputer.methods(), CitiHackathonTestSuite.class);
 		JunitReport report = new JunitReport(result.getRunCount(), result.getFailureCount(), result.getRunCount() - result.getFailureCount() - result.getIgnoreCount(), result.getFailures());
 		LOG.info(report.toString());
