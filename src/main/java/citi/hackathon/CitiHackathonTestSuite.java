@@ -3,26 +3,40 @@ package citi.hackathon;
 import java.util.Arrays;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
+import citi.hackathon.config.SpringConfig;
 import citi.hackathon.entity.Sample;
 
 public class CitiHackathonTestSuite {
+	private static final Logger LOG = LoggerFactory.getLogger(CitiHackathonTestSuite.class);
 	private RestTemplate restTemplate = new RestTemplate();
+	
+	@BeforeClass
+	public static void initialiseTest() {
+		LOG.info("Initialising Test for URL: [{}]" ,SpringConfig.getReportUrl());
+	}
 	
 	@Test
 	public void test() {
-		System.out.println("running test");
+		Assert.assertTrue(true);
 	}
 	
 	@Test
 	public void fail_test() {
 		Assert.assertTrue("You have failed test in this api method /getRequest", false);
+	}
+	@Test
+	public void fail_test_2() {
+		Assert.assertTrue("You have failed test in this api method /postRequest", false);
 	}
 	
 	@Test
@@ -36,7 +50,7 @@ public class CitiHackathonTestSuite {
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity <String> entity = new HttpEntity<String>(headers);
 		
-		Sample result = restTemplate.exchange("http://localhost:8080/sample", HttpMethod.GET, entity, Sample.class).getBody();
+		Sample result = restTemplate.exchange(SpringConfig.getReportUrl() + "/sample", HttpMethod.GET, entity, Sample.class).getBody();
 		Assert.assertEquals(new Sample("Sample Username", "Sample Password").getUsername(), result.getUsername());
 	}
 }
