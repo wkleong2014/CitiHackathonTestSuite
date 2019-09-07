@@ -51,15 +51,13 @@ public class CitiHackathonAuthenticationTestSuite {
 		for (Map.Entry<String, String> entry : params.entrySet()) {
 			builder.queryParam(entry.getKey(), entry.getValue());
 		}
-		Account result = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params)
-				.getBody();
-		Assert.assertEquals(expected.getUserId(), result.getUserId());
-		Assert.assertEquals(expected.getUsername(), result.getUsername());
-		Assert.assertEquals(expected.getPassword(), result.getPassword());
-		Assert.assertEquals(expected.getAccountType(), result.getAccountType());
-		Assert.assertEquals(expected.getEmailAddress(), result.getEmailAddress());
-		Assert.assertEquals(expected.getFirstName(), result.getFirstName());
-		Assert.assertEquals(expected.getLastName(), result.getLastName());
+		try {
+			Account result = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params)
+					.getBody();
+			assertAccount(expected, result);
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
 	}
 
 	@Test
@@ -68,15 +66,12 @@ public class CitiHackathonAuthenticationTestSuite {
 		Account expected = new Account(2, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin@email.com",
 				"Admin", "Johnson");
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
-		Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
-
-		Assert.assertEquals(expected.getUserId(), result.getUserId());
-		Assert.assertEquals(expected.getUsername(), result.getUsername());
-		Assert.assertEquals(expected.getPassword(), result.getPassword());
-		Assert.assertEquals(expected.getAccountType(), result.getAccountType());
-		Assert.assertEquals(expected.getEmailAddress(), result.getEmailAddress());
-		Assert.assertEquals(expected.getFirstName(), result.getFirstName());
-		Assert.assertEquals(expected.getLastName(), result.getLastName());
+		try {
+			Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
+			assertAccount(expected, result);
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
 	}
 	
 	@Test
@@ -85,15 +80,22 @@ public class CitiHackathonAuthenticationTestSuite {
 		Account expected = new Account(1, "my_username", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "user", "user@email.com",
 				"Peter", "Johnson");
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
-		Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
-
-		Assert.assertEquals(expected.getUserId(), result.getUserId());
-		Assert.assertEquals(expected.getUsername(), result.getUsername());
-		Assert.assertEquals(expected.getPassword(), result.getPassword());
-		Assert.assertEquals(expected.getAccountType(), result.getAccountType());
-		Assert.assertEquals(expected.getEmailAddress(), result.getEmailAddress());
-		Assert.assertEquals(expected.getFirstName(), result.getFirstName());
-		Assert.assertEquals(expected.getLastName(), result.getLastName());
+		try {
+			Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
+			assertAccount(expected, result);
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
+	}
+	
+	private void assertAccount(Account expected, Account result) {
+		Assert.assertEquals("<Wrong userId>", expected.getUserId(), result.getUserId());
+		Assert.assertEquals("<Wrong username>", expected.getUsername(), result.getUsername());
+		Assert.assertEquals("<Wrong password>", expected.getPassword(), result.getPassword());
+		Assert.assertEquals("<Wrong accountType>", expected.getAccountType(), result.getAccountType());
+		Assert.assertEquals("<Wrong emailAddress>", expected.getEmailAddress(), result.getEmailAddress());
+		Assert.assertEquals("<Wrong firstName>", expected.getFirstName(), result.getFirstName());
+		Assert.assertEquals("<Wrong lastName>", expected.getLastName(), result.getLastName());
 	}
 
 //	
