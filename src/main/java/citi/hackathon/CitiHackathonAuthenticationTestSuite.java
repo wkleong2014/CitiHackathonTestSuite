@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -52,9 +53,15 @@ public class CitiHackathonAuthenticationTestSuite {
 			builder.queryParam(entry.getKey(), entry.getValue());
 		}
 		try {
-			Account result = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params)
-					.getBody();
+			Account result = restTemplate
+					.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params).getBody();
 			assertAccount(expected, result);
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			}
 		} catch (Exception e) {
 			Assert.assertTrue("Test Fail due to exception: " + e, false);
 		}
@@ -69,11 +76,17 @@ public class CitiHackathonAuthenticationTestSuite {
 		try {
 			Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
 			assertAccount(expected, result);
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			}
 		} catch (Exception e) {
 			Assert.assertTrue("Test Fail due to exception: " + e, false);
 		}
 	}
-	
+
 	@Test
 	public void get_user_account() {
 		String url = testUrl + "/accounts/1";
@@ -83,11 +96,17 @@ public class CitiHackathonAuthenticationTestSuite {
 		try {
 			Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
 			assertAccount(expected, result);
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			}
 		} catch (Exception e) {
 			Assert.assertTrue("Test Fail due to exception: " + e, false);
 		}
 	}
-	
+
 	private void assertAccount(Account expected, Account result) {
 		Assert.assertEquals("<Wrong userId>", expected.getUserId(), result.getUserId());
 		Assert.assertEquals("<Wrong username>", expected.getUsername(), result.getUsername());
