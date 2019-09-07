@@ -36,7 +36,7 @@ public class CitiHackathonAuthenticationTestSuite {
 
 	@Test
 	public void create_admin_account() {
-		String url = testUrl + "/account";
+		String url = testUrl + "/accounts";
 		Account expected = new Account(1, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin@email.com",
 				"Admin", "Johnson");
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
@@ -53,6 +53,40 @@ public class CitiHackathonAuthenticationTestSuite {
 		}
 		Account result = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params)
 				.getBody();
+		Assert.assertEquals(expected.getUserId(), result.getUserId());
+		Assert.assertEquals(expected.getUsername(), result.getUsername());
+		Assert.assertEquals(expected.getPassword(), result.getPassword());
+		Assert.assertEquals(expected.getAccountType(), result.getAccountType());
+		Assert.assertEquals(expected.getEmailAddress(), result.getEmailAddress());
+		Assert.assertEquals(expected.getFirstName(), result.getFirstName());
+		Assert.assertEquals(expected.getLastName(), result.getLastName());
+	}
+
+	@Test
+	public void get_admin_account() {
+		String url = testUrl + "/accounts/2";
+		Account expected = new Account(2, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin@email.com",
+				"Admin", "Johnson");
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
+
+		Assert.assertEquals(expected.getUserId(), result.getUserId());
+		Assert.assertEquals(expected.getUsername(), result.getUsername());
+		Assert.assertEquals(expected.getPassword(), result.getPassword());
+		Assert.assertEquals(expected.getAccountType(), result.getAccountType());
+		Assert.assertEquals(expected.getEmailAddress(), result.getEmailAddress());
+		Assert.assertEquals(expected.getFirstName(), result.getFirstName());
+		Assert.assertEquals(expected.getLastName(), result.getLastName());
+	}
+	
+	@Test
+	public void get_user_account() {
+		String url = testUrl + "/accounts/1";
+		Account expected = new Account(1, "my_username", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "user", "user@email.com",
+				"Peter", "Johnson");
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		Account result = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class).getBody();
+
 		Assert.assertEquals(expected.getUserId(), result.getUserId());
 		Assert.assertEquals(expected.getUsername(), result.getUsername());
 		Assert.assertEquals(expected.getPassword(), result.getPassword());

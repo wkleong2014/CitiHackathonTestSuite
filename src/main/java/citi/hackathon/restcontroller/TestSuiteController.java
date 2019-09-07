@@ -69,7 +69,7 @@ public class TestSuiteController {
 		return new Sample("Sample Username", "Sample Password");
 	}
 	
-	@RequestMapping("/account")
+	@RequestMapping("/accounts")
 	public Account test_account(
 			@RequestParam("username") String username,
 			@RequestParam("password") String password,
