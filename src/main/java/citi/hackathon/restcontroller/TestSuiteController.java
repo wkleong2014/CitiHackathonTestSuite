@@ -133,8 +133,8 @@ public class TestSuiteController {
 		return account;
 	}
 	
-	@PostMapping("/accounts")
-	public ResultString reset_account(@RequestParam("userId") Integer userId) {
+	@PostMapping("/accounts/reset")
+	public ResultString reset_account(@RequestParam("userId") Integer userId, @RequestParam("email") String email) {
 		return new ResultString("Your password has been sent to your email");
 	}
 

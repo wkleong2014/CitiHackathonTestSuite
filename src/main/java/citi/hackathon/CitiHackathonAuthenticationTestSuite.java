@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,7 +35,7 @@ public class CitiHackathonAuthenticationTestSuite {
 		LOG.info("Initialising Test for URL: [{}]", testUrl);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));		
 	}
 	
 	@Test
@@ -192,6 +193,8 @@ public class CitiHackathonAuthenticationTestSuite {
 	@Test
 	public void update_user_account() {
 		String url = testUrl + "/accounts";
+		HttpComponentsClientHttpRequestFactory  requestFactory = new HttpComponentsClientHttpRequestFactory();
+		restTemplate.setRequestFactory(requestFactory);
 		UpdateAccount requestBody = new UpdateAccount("new_password", "new_email", "new_firstname", "new_lastname");
 		HttpEntity<UpdateAccount> entity = new HttpEntity<UpdateAccount>(requestBody, headers);
 		Map<String, String> params = new HashMap<>();
@@ -246,7 +249,7 @@ public class CitiHackathonAuthenticationTestSuite {
 	
 	@Test
 	public void reset_account_password() {
-		String url = testUrl + "/accounts";
+		String url = testUrl + "/accounts/reset";
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		Map<String, String> params = new HashMap<>();
 		params.put("userId", "1");
