@@ -7,15 +7,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import citi.hackathon.config.SpringConfig;
-import citi.hackathon.entity.SampleAccount;
-import citi.hackathon.entity.Sample;
 
 public class CitiHackathonEventTestSuite {
 	private static final Logger LOG = LoggerFactory.getLogger(CitiHackathonEventTestSuite.class);
