@@ -1,5 +1,8 @@
 package citi.hackathon.restcontroller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -21,9 +24,13 @@ import citi.hackathon.CitiHackathonEventTestSuite;
 import citi.hackathon.CitiHackathonReportTestSuite;
 import citi.hackathon.config.SpringConfig;
 import citi.hackathon.entity.Account;
+import citi.hackathon.entity.DemographicReport;
+import citi.hackathon.entity.Event;
 import citi.hackathon.entity.JunitReport;
+import citi.hackathon.entity.OrganizationBreakdownReport;
 import citi.hackathon.entity.ResultString;
 import citi.hackathon.entity.UpdateAccount;
+import citi.hackathon.entity.Volunteer;
 
 @RestController
 public class TestSuiteController {
@@ -132,10 +139,33 @@ public class TestSuiteController {
 		LOG.info("Deleted Account: " + account.toString());
 		return account;
 	}
-	
+
 	@PostMapping("/accounts/reset")
 	public ResultString reset_account(@RequestParam("userId") Integer userId, @RequestParam("email") String email) {
 		return new ResultString("Your password has been sent to your email");
+	}
+
+	@GetMapping("/reports/demographic")
+	public DemographicReport get_demographic_report(@RequestParam("eventId") Integer eventId) {
+		List<Volunteer> volunteers = new ArrayList<Volunteer>();
+		volunteers.add(new Volunteer(2, "peter", "Johnson", "M", 19, "user"));
+		volunteers.add(new Volunteer(3, "Adam", "Steven", "M", 42, "user"));
+		volunteers.add(new Volunteer(5, "Crystal", "Sam", "F", 25, "user"));
+		volunteers.add(new Volunteer(15, "Kylie", "Jade", "F", 33, "user"));
+		DemographicReport demographicReport = new DemographicReport(1002, "Dog Shelter Cleaning",
+				"2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4, "SPCA", "Animals", volunteers);
+		LOG.info("Returning Demographic Report: " + demographicReport.toString());
+		return demographicReport;
+	}
+	
+	@GetMapping("/reports/organization-breakdown")
+	public OrganizationBreakdownReport get_organization_breakdown_report(@RequestParam("eventId") Integer eventId) {
+		List<Event> events = new ArrayList<Event>();
+		events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4, "Animals", "closed"));
+		events.add(new Event(1003, "Walk the Talk, Walk the Dogs", "2019-11-05T13:00:00Z", "2019-11-05T16:00:00Z", 6, "Animals", "open"));
+		OrganizationBreakdownReport organizationBreakdownReport = new OrganizationBreakdownReport(events);
+		LOG.info("Returning Org Breakdown Report: " + organizationBreakdownReport.toString());
+		return organizationBreakdownReport;
 	}
 
 }
