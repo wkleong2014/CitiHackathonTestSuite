@@ -9,13 +9,14 @@ public class DemographicReport {
 	private String endDateTime;
 	private Integer numParticipants;
 	private String organizerName;
-	private String categoryId;
+	private Integer categoryId;
 	private List<Volunteer> volunteers;
+	private String eventStatus;
 	
 	public DemographicReport() {}
 	
 	public DemographicReport(Integer eventId, String eventName, String startDateTime, String endDateTime,
-			Integer numParticipants, String organizerName, String categoryId, List<Volunteer> volunteers) {
+			Integer numParticipants, String organizerName, Integer categoryId, List<Volunteer> volunteers, String eventStatus) {
 		super();
 		this.eventId = eventId;
 		this.eventName = eventName;
@@ -25,6 +26,7 @@ public class DemographicReport {
 		this.organizerName = organizerName;
 		this.categoryId = categoryId;
 		this.volunteers = volunteers;
+		this.eventStatus = eventStatus;
 	}
 
 	public Integer getEventId() {
@@ -75,11 +77,11 @@ public class DemographicReport {
 		this.organizerName = organizerName;
 	}
 
-	public String getCategoryId() {
+	public Integer getCategoryId() {
 		return categoryId;
 	}
 
-	public void setCategoryId(String categoryId) {
+	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
 
@@ -91,11 +93,20 @@ public class DemographicReport {
 		this.volunteers = volunteers;
 	}
 
+	public String getEventStatus() {
+		return eventStatus;
+	}
+
+	public void setEventStatus(String eventStatus) {
+		this.eventStatus = eventStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "DemographicReport [eventId=" + eventId + ", eventName=" + eventName + ", startDateTime=" + startDateTime
 				+ ", endDateTime=" + endDateTime + ", numParticipants=" + numParticipants + ", organizerName="
-				+ organizerName + ", categoryId=" + categoryId + ", volunteers=" + volunteers + "]";
+				+ organizerName + ", categoryId=" + categoryId + ", volunteers=" + volunteers + ", eventStatus="
+				+ eventStatus + "]";
 	}
 	
 }
