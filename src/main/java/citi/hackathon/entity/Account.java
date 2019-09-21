@@ -9,7 +9,8 @@ public class Account {
 	private String emailAddress;
 	private String firstName;
 	private String lastName;
-	private Boolean isAdmin;
+	private String gender;
+	private Integer age;
 
 	// Default Empty Constructor
 	public Account() {
@@ -17,7 +18,7 @@ public class Account {
 
 	// Parameterise Constructor
 	public Account(Integer userId, String username, String password, String accountType, String emailAddress,
-			String firstName, String lastName, Boolean isAdmin) {
+			String firstName, String lastName, String gender, Integer age) {
 		this.userId = userId;
 		this.username = username;
 		this.password = password;
@@ -25,7 +26,8 @@ public class Account {
 		this.emailAddress = emailAddress;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.isAdmin = isAdmin;
+		this.gender = gender;
+		this.age = age;
 	}
 
 	public Integer getUserId() {
@@ -84,19 +86,27 @@ public class Account {
 		this.lastName = lastName;
 	}
 
-	public Boolean getIsAdmin() {
-		return isAdmin;
+	public String getGender() {
+		return gender;
 	}
 
-	public void setIsAdmin(Boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
 	}
 
 	@Override
 	public String toString() {
 		return "Account [userId=" + userId + ", username=" + username + ", password=" + password + ", accountType="
 				+ accountType + ", emailAddress=" + emailAddress + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", isAdmin=" + isAdmin + "]";
+				+ ", gender=" + gender + ", age=" + age + "]";
 	}
 
 }

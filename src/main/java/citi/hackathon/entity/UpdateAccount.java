@@ -6,17 +6,21 @@ public class UpdateAccount {
 	private String emailAddress;
 	private String firstName;
 	private String lastName;
+	private String gender;
+	private Integer age;
 
 	// Default Empty Constructor
 	public UpdateAccount() {
 	}
 
 	// Parameterise Constructor
-	public UpdateAccount(String password, String emailAddress, String firstName, String lastName) {
+	public UpdateAccount(String password, String emailAddress, String firstName, String lastName, String gender, Integer age) {
 		this.password = password;
 		this.emailAddress = emailAddress;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.gender = gender;
+		this.age = age;
 	}
 
 	public String getPassword() {
@@ -51,10 +55,28 @@ public class UpdateAccount {
 		this.lastName = lastName;
 	}
 
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
 	@Override
 	public String toString() {
 		return "UpdateAccount [password=" + password + ", emailAddress=" + emailAddress + ", firstName=" + firstName
-				+ ", lastName=" + lastName + "]";
+				+ ", lastName=" + lastName + ", gender=" + gender + ", age=" + age + "]";
 	}
+
+	
 
 }
