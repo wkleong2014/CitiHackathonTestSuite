@@ -1,8 +1,7 @@
 package citi.hackathon.entity;
 
-public class Account {
-
-	private Integer userId;
+public class CreateAccountRequestBody {
+	
 	private String username;
 	private String password;
 	private String accountType;
@@ -11,15 +10,11 @@ public class Account {
 	private String lastName;
 	private String gender;
 	private Integer age;
+	
+	public CreateAccountRequestBody() {}
 
-	// Default Empty Constructor
-	public Account() {
-	}
-
-	// Parameterise Constructor
-	public Account(Integer userId, String username, String password, String accountType, String emailAddress,
+	public CreateAccountRequestBody(String username, String password, String accountType, String emailAddress,
 			String firstName, String lastName, String gender, Integer age) {
-		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.accountType = accountType;
@@ -28,14 +23,6 @@ public class Account {
 		this.lastName = lastName;
 		this.gender = gender;
 		this.age = age;
-	}
-
-	public Integer getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Integer userId) {
-		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -98,15 +85,15 @@ public class Account {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
 	@Override
 	public String toString() {
-		return "Account [userId=" + userId + ", username=" + username + ", password=" + password + ", accountType="
+		return "CreateAccountRequestBody [username=" + username + ", password=" + password + ", accountType="
 				+ accountType + ", emailAddress=" + emailAddress + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", gender=" + gender + ", age=" + age + "]";
 	}
-
+	
 }
