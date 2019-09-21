@@ -8,6 +8,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,6 +30,7 @@ import citi.hackathon.entity.DemographicReport;
 import citi.hackathon.entity.Event;
 import citi.hackathon.entity.JunitReport;
 import citi.hackathon.entity.OrganizationBreakdownReport;
+import citi.hackathon.entity.ResetPassword;
 import citi.hackathon.entity.ResultString;
 import citi.hackathon.entity.UpdateAccount;
 import citi.hackathon.entity.Volunteer;
@@ -85,10 +88,10 @@ public class TestSuiteController {
 		Account account = null;
 		if (userId == 1) {
 			account = new Account(1, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin_nimda@email.com",
-					"Admin", "Nimda", true);
+					"Admin", "Nimda", "Male", 33);
 		} else if (userId == 2) {
 			account = new Account(2, "peter", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "user", "peter_johnson@email.com",
-					"Peter", "Johnson", false);
+					"Peter", "Johnson", "Male", 33);
 		}
 		LOG.info("Returning Account: " + account.toString());
 		return account;
@@ -97,52 +100,71 @@ public class TestSuiteController {
 	@PostMapping("/accounts")
 	public Account create_account(@RequestParam("username") String username, @RequestParam("password") String password,
 			@RequestParam("accountType") String accountType, @RequestParam("emailAddress") String emailAddress,
-			@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+			@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
+			@RequestParam("gender") String gender, @RequestParam("age") Integer age) {
 		Account account = null;
 		if ("admin".equals(accountType)) {
-			account = new Account(1, username, password, accountType, emailAddress, firstName, lastName, true);
+			account = new Account(1, username, password, accountType, emailAddress, firstName, lastName, gender, age);
 		} else {
-			account = new Account(2, username, password, accountType, emailAddress, firstName, lastName, false);
+			account = new Account(2, username, password, accountType, emailAddress, firstName, lastName, gender, age);
 		}
 		LOG.info("Create Account: " + account.toString());
 		return account;
 	}
 
-	@PutMapping("/accounts")
-	public Account update_admin_account(@RequestParam("userId") Integer userId,
-			@RequestBody UpdateAccount updateAccount) {
-		Account account = new Account(1, "admin", updateAccount.getPassword(), "admin", updateAccount.getEmailAddress(),
-				updateAccount.getFirstName(), updateAccount.getLastName(), true);
+	@PutMapping("/accounts/account-type")
+	public ResponseEntity update_account_type(@RequestParam("userId") Integer userId) {
+		if (userId < 0) {
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		Account account = new Account(1, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin_nimda@email.com",
+				"Admin", "Nimda", "Male", 27);
 		LOG.info("Update Account: " + account.toString());
-		return account;
+		return new ResponseEntity(account, HttpStatus.OK);
+	}
+
+	@PutMapping("/accounts")
+	public ResponseEntity update_admin_account(@RequestParam("userId") Integer userId,
+			@RequestBody UpdateAccount updateAccount) {
+		if (userId < 0) {
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		Account account = new Account(1, "admin", updateAccount.getPassword(), "admin", updateAccount.getEmailAddress(),
+				updateAccount.getFirstName(), updateAccount.getLastName(), updateAccount.getGender(),
+				updateAccount.getAge());
+		LOG.info("Update Account: " + account.toString());
+		return new ResponseEntity(account, HttpStatus.OK);
 	}
 
 	@PatchMapping("/accounts")
-	public Account update_user_account(@RequestParam("userId") Integer userId,
+	public ResponseEntity update_user_account(@RequestParam("userId") Integer userId,
 			@RequestBody UpdateAccount updateAccount) {
+		if (userId < 0) {
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		Account account = new Account(2, "peter", updateAccount.getPassword(), "user", updateAccount.getEmailAddress(),
-				updateAccount.getFirstName(), updateAccount.getLastName(), false);
+				updateAccount.getFirstName(), updateAccount.getLastName(), updateAccount.getGender(),
+				updateAccount.getAge());
 		LOG.info("Update Account: " + account.toString());
-		return account;
+		return new ResponseEntity(account, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/accounts")
-	public Account delete_account(@RequestParam("userId") Integer userId) {
-		Account account = null;
-		if (userId == 1) {
-			account = new Account(userId, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin_nimda@email.com",
-					"Admin", "Nimda", true);
-		} else if (userId == 2) {
-			account = new Account(userId, "peter", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "user",
-					"peter_johnson@email.com", "Peter", "Johnson", false);
+	public ResponseEntity delete_account(@RequestParam("userId") Integer userId) {
+		LOG.info("Deleted Account UserId: " + userId);
+		if (userId < 0) {
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		LOG.info("Deleted Account: " + account.toString());
-		return account;
+		return new ResponseEntity(new ResultString("Account Deleted"), HttpStatus.OK);
 	}
 
-	@PostMapping("/accounts/reset")
-	public ResultString reset_account(@RequestParam("userId") Integer userId, @RequestParam("email") String email) {
-		return new ResultString("Your password has been sent to your email");
+	@PostMapping("/accounts/reset-password")
+	public ResponseEntity reset_account(@RequestParam("userId") Integer userId,
+			@RequestBody ResetPassword resetPassword) {
+		if (userId < 0) {
+			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity(new ResultString("Your password has been sent to your email"), HttpStatus.OK);
 	}
 
 	@GetMapping("/reports/demographic")
@@ -157,12 +179,14 @@ public class TestSuiteController {
 		LOG.info("Returning Demographic Report: " + demographicReport.toString());
 		return demographicReport;
 	}
-	
+
 	@GetMapping("/reports/organization-breakdown")
 	public OrganizationBreakdownReport get_organization_breakdown_report(@RequestParam("eventId") Integer eventId) {
 		List<Event> events = new ArrayList<Event>();
-		events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4, "Animals", "closed"));
-		events.add(new Event(1003, "Walk the Talk, Walk the Dogs", "2019-11-05T13:00:00Z", "2019-11-05T16:00:00Z", 6, "Animals", "open"));
+		events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4, "Animals",
+				"closed"));
+		events.add(new Event(1003, "Walk the Talk, Walk the Dogs", "2019-11-05T13:00:00Z", "2019-11-05T16:00:00Z", 6,
+				"Animals", "open"));
 		OrganizationBreakdownReport organizationBreakdownReport = new OrganizationBreakdownReport(events);
 		LOG.info("Returning Org Breakdown Report: " + organizationBreakdownReport.toString());
 		return organizationBreakdownReport;
