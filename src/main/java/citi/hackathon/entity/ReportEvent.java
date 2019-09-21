@@ -12,11 +12,13 @@ public class ReportEvent {
 	private Integer categoryId;
 	private String eventStatus;
 	private String organizerName;
-	
-	public ReportEvent() {}
+	private Integer numHours;
 
-	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime, Integer numParticipants,
-			List<Volunteer> volunteers, Integer categoryId, String eventStatus) {
+	public ReportEvent() {
+	}
+
+	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime,
+			Integer numParticipants, List<Volunteer> volunteers, Integer categoryId, String eventStatus) {
 		this.eventId = eventId;
 		this.eventName = eventName;
 		this.startDateTime = startDateTime;
@@ -26,9 +28,10 @@ public class ReportEvent {
 		this.categoryId = categoryId;
 		this.eventStatus = eventStatus;
 	}
-	
-	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime, Integer numParticipants,
-			List<Volunteer> volunteers, Integer categoryId, String eventStatus, String organizerName) {
+
+	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime,
+			Integer numParticipants, List<Volunteer> volunteers, Integer categoryId, String eventStatus,
+			String organizerName) {
 		this.eventId = eventId;
 		this.eventName = eventName;
 		this.startDateTime = startDateTime;
@@ -38,6 +41,19 @@ public class ReportEvent {
 		this.categoryId = categoryId;
 		this.eventStatus = eventStatus;
 		this.organizerName = organizerName;
+	}
+
+	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime,
+			Integer numHours, String organizerName, Integer categoryId, String eventStatus) {
+		this.eventId = eventId;
+		this.eventName = eventName;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.numHours = numHours;
+		this.organizerName = organizerName;
+		this.categoryId = categoryId;
+		this.eventStatus = eventStatus;
+		
 	}
 
 	public Integer getEventId() {
@@ -112,11 +128,20 @@ public class ReportEvent {
 		this.organizerName = organizerName;
 	}
 
+	public Integer getNumHours() {
+		return numHours;
+	}
+
+	public void setNumHours(Integer numHours) {
+		this.numHours = numHours;
+	}
+
 	@Override
 	public String toString() {
-		return "Event [eventId=" + eventId + ", eventName=" + eventName + ", startDateTime=" + startDateTime
+		return "ReportEvent [eventId=" + eventId + ", eventName=" + eventName + ", startDateTime=" + startDateTime
 				+ ", endDateTime=" + endDateTime + ", numParticipants=" + numParticipants + ", volunteers=" + volunteers
 				+ ", categoryId=" + categoryId + ", eventStatus=" + eventStatus + ", organizerName=" + organizerName
-				+ "]";
+				+ ", numHours=" + numHours + "]";
 	}
+
 }

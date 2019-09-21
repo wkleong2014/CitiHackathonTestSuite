@@ -34,6 +34,7 @@ import citi.hackathon.entity.BreakdownReport;
 import citi.hackathon.entity.ResetPassword;
 import citi.hackathon.entity.ResultString;
 import citi.hackathon.entity.UpdateAccount;
+import citi.hackathon.entity.UserHistoricalBreakdownReport;
 import citi.hackathon.entity.Volunteer;
 
 @RestController
@@ -199,20 +200,19 @@ public class TestSuiteController {
 		volunteers.add(new Volunteer(15, "Kylie", "Jade", "F", 33, "user"));
 		events.add(new ReportEvent(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4,
 				volunteers, 1, "closed"));
-		events.add(new ReportEvent(1003, "Walk the Talk, Walk the Dogs", "2019-11-05T13:00:00Z", "2019-11-05T16:00:00Z", 6,
-				volunteers, 1, "open"));
+		events.add(new ReportEvent(1003, "Walk the Talk, Walk the Dogs", "2019-11-05T13:00:00Z", "2019-11-05T16:00:00Z",
+				6, volunteers, 1, "open"));
 		BreakdownReport organizationBreakdownReport = new BreakdownReport(events);
 		LOG.info("Returning Org Breakdown Report: " + organizationBreakdownReport.toString());
 		return new ResponseEntity<BreakdownReport>(organizationBreakdownReport, HttpStatus.OK);
 	}
 
 	@GetMapping("/reports/historical")
-	public ResponseEntity<BreakdownReport> get_historial_report(
+	public ResponseEntity<BreakdownReport> get_historial_report_for_admin(
 			@RequestParam(value = "fromDate", required = false) String fromDate,
 			@RequestParam(value = "toDate", required = false) String toDate) {
 		BreakdownReport historicalBreakdownReport = null;
 		if (fromDate == null || toDate == null) {
-			LOG.info("Returning all historical report");
 			List<ReportEvent> events = new ArrayList<ReportEvent>();
 			List<Volunteer> volunteers = new ArrayList<Volunteer>();
 			volunteers.add(new Volunteer(2, "Peter", "Johnson", "M", 19, "user"));
@@ -226,9 +226,8 @@ public class TestSuiteController {
 			events.add(new ReportEvent(1004, "Zoo Outing", "2019-07-02T01:00:00Z", "2019-07-02T08:00:00Z", 3,
 					volunteers, 3, "open", "YMCA"));
 			historicalBreakdownReport = new BreakdownReport(events);
-			LOG.info("Returning Historical Breakdown Report: " + historicalBreakdownReport.toString());
+			LOG.info("Returning All Admin Historical Breakdown Report: " + historicalBreakdownReport.toString());
 		} else {
-			LOG.info("Returning from {} to {} historical report", fromDate, toDate);
 			List<ReportEvent> events = new ArrayList<ReportEvent>();
 			List<Volunteer> volunteers = new ArrayList<Volunteer>();
 			volunteers.add(new Volunteer(2, "Peter", "Johnson", "M", 19, "user"));
@@ -240,9 +239,43 @@ public class TestSuiteController {
 			events.add(new ReportEvent(1003, "Beach Cleaning", "2019-01-02T01:00:00Z", "2019-01-02T04:00:00Z", 4,
 					volunteers, 2, "open", "NEA"));
 			historicalBreakdownReport = new BreakdownReport(events);
-			LOG.info("Returning Historical Breakdown Report: " + historicalBreakdownReport.toString());
+			LOG.info("Returning from {} to {} Admin Historical Breakdown Report: " + historicalBreakdownReport.toString());
 		}
 		return new ResponseEntity<BreakdownReport>(historicalBreakdownReport, HttpStatus.OK);
+	}
+
+	@GetMapping("/reports/user-historical")
+	public ResponseEntity<UserHistoricalBreakdownReport> get_user_historial_report(
+			@RequestParam(value = "userId", required = false) String userId,
+			@RequestParam(value = "fromDate", required = false) String fromDate,
+			@RequestParam(value = "toDate", required = false) String toDate) {
+		UserHistoricalBreakdownReport userHistoricalBreakdownReport = null;
+		if (userId == null) {
+			userHistoricalBreakdownReport = new UserHistoricalBreakdownReport(0, 0, "2018-12-25", "2019-08-07",
+					new ArrayList<ReportEvent>());
+			LOG.info("Returning no result: " + userHistoricalBreakdownReport.toString());
+		} else if (fromDate == null || toDate == null) {
+			List<ReportEvent> reportEvents = new ArrayList<ReportEvent>();
+			reportEvents.add(new ReportEvent(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z",
+					"2018-12-28T12:00:00Z", 2, "SPCA", 1, "closed"));
+			reportEvents.add(new ReportEvent(1005, "Walk the Talk, Walk the Dogs", "2019-08-02T01:00:00Z",
+					"2019-08-02T04:00:00Z", 3, "SPCA", 1, "open"));
+			reportEvents.add(new ReportEvent(1004, "Zoo Outing", "2019-07-02T01:00:00Z",
+					"2019-07-02T08:00:00Z", 7, "YMCA", 3, "open"));
+			userHistoricalBreakdownReport = new UserHistoricalBreakdownReport(2, 5, "2018-12-25", "2019-08-07",
+					reportEvents);
+			LOG.info("Returning all of userId [{}] historical report: " + userHistoricalBreakdownReport.toString(), userId);
+		} else {
+			List<ReportEvent> reportEvents = new ArrayList<ReportEvent>();
+			reportEvents.add(new ReportEvent(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z",
+					"2018-12-28T12:00:00Z", 2, "SPCA", 1, "confirmed"));
+			reportEvents.add(new ReportEvent(1005, "Walk the Talk, Walk the Dogs", "2019-08-02T01:00:00Z",
+					"2019-08-02T04:00:00Z", 3, "SPCA", 1, "closed"));
+			userHistoricalBreakdownReport = new UserHistoricalBreakdownReport(2, 5, "2018-12-25", "2019-08-07",
+					reportEvents);
+			LOG.info("Returning userId [{}] from {} to {} historical report:" + userHistoricalBreakdownReport.toString(), userId, fromDate, toDate);
+		}
+		return new ResponseEntity<UserHistoricalBreakdownReport>(userHistoricalBreakdownReport, HttpStatus.OK);
 	}
 
 }

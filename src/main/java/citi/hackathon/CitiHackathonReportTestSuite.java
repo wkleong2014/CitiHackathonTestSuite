@@ -24,6 +24,7 @@ import citi.hackathon.config.SpringConfig;
 import citi.hackathon.entity.Account;
 import citi.hackathon.entity.DemographicReport;
 import citi.hackathon.entity.ReportEvent;
+import citi.hackathon.entity.UserHistoricalBreakdownReport;
 import citi.hackathon.entity.BreakdownReport;
 import citi.hackathon.entity.Volunteer;
 
@@ -61,6 +62,8 @@ public class CitiHackathonReportTestSuite {
 			Assert.assertTrue("<Missing numParticipants>", result.getNumParticipants() != null);
 			Assert.assertTrue("<Missing organizerName>", result.getOrganizerName() != null);
 			Assert.assertTrue("<Missing categoryId>", result.getCategoryId() != null);
+			Assert.assertTrue("<Missing volunteers>", result.getVolunteers() != null);
+			Assert.assertTrue("<Volunteers should not be empty>", result.getVolunteers().size() > 0);
 			List<Volunteer> volunteers = result.getVolunteers();
 			for (Volunteer volunteer: volunteers) {
 				Assert.assertTrue("<Missing userId>", volunteer.getUserId() != null);
@@ -127,6 +130,7 @@ public class CitiHackathonReportTestSuite {
 		}
 		try {
 			BreakdownReport result = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, BreakdownReport.class, params).getBody();
+			Assert.assertTrue("<Missing events>", result.getEvents() != null);
 			List<ReportEvent> events = result.getEvents();
 			for (ReportEvent event: events) {
 				Assert.assertTrue("<Missing eventId>", event.getEventId() != null);
@@ -134,6 +138,8 @@ public class CitiHackathonReportTestSuite {
 				Assert.assertTrue("<Missing startDateTime>", event.getStartDateTime() != null);
 				Assert.assertTrue("<Missing endDateTime>", event.getEndDateTime() != null);
 				Assert.assertTrue("<Missing numParticipants>", event.getNumParticipants() != null);
+				Assert.assertTrue("<Missing volunteers>", event.getVolunteers() != null);
+				Assert.assertTrue("<Volunteers should not be empty>", event.getVolunteers().size() > 0);
 				List<Volunteer> volunteers = event.getVolunteers();
 				for (Volunteer volunteer: volunteers) {
 					Assert.assertTrue("<Missing userId>", volunteer.getUserId() != null);
@@ -191,11 +197,12 @@ public class CitiHackathonReportTestSuite {
 	}
 	
 	@Test
-	public void get_all_historical_report() {
+	public void get_all_historical_report_for_admin() {
 		String url = testUrl + "/reports/historical";
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		try {
 			BreakdownReport result = restTemplate.exchange(url, HttpMethod.GET, entity, BreakdownReport.class).getBody();
+			Assert.assertTrue("<Missing events>", result.getEvents() != null);
 			List<ReportEvent> events = result.getEvents();
 			for (ReportEvent event: events) {
 				Assert.assertTrue("<Missing eventId>", event.getEventId() != null);
@@ -203,6 +210,8 @@ public class CitiHackathonReportTestSuite {
 				Assert.assertTrue("<Missing startDateTime>", event.getStartDateTime() != null);
 				Assert.assertTrue("<Missing endDateTime>", event.getEndDateTime() != null);
 				Assert.assertTrue("<Missing numParticipants>", event.getNumParticipants() != null);
+				Assert.assertTrue("<Missing volunteers>", event.getVolunteers() != null);
+				Assert.assertTrue("<Volunteers should not be empty>", event.getVolunteers().size() > 0);
 				List<Volunteer> volunteers = event.getVolunteers();
 				for (Volunteer volunteer: volunteers) {
 					Assert.assertTrue("<Missing userId>", volunteer.getUserId() != null);
@@ -211,7 +220,6 @@ public class CitiHackathonReportTestSuite {
 					Assert.assertTrue("<Missing gender>", volunteer.getGender() != null);
 					Assert.assertTrue("<Missing age>", volunteer.getAge() != null);
 					Assert.assertTrue("<Missing accountType>", volunteer.getAccountType() != null);
-					
 				}
 				Assert.assertTrue("<Missing categoryId>", event.getCategoryId() != null);
 				Assert.assertTrue("<Missing eventStatus>", event.getEventStatus() != null);
@@ -232,7 +240,7 @@ public class CitiHackathonReportTestSuite {
 	}
 	
 	@Test
-	public void get_from_to_historical_report() {
+	public void get_from_to_historical_report_for_admin() {
 		String url = testUrl + "/reports/historical";
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 		Map<String, String> params = new HashMap<>();
@@ -244,6 +252,8 @@ public class CitiHackathonReportTestSuite {
 		}
 		try {
 			BreakdownReport result = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, BreakdownReport.class, params).getBody();
+			Assert.assertTrue("<Missing events>", result.getEvents() != null);
+			Assert.assertTrue("<Events should not be empty>", result.getEvents().size() > 0);
 			List<ReportEvent> events = result.getEvents();
 			for (ReportEvent event: events) {
 				Assert.assertTrue("<Missing eventId>", event.getEventId() != null);
@@ -251,6 +261,8 @@ public class CitiHackathonReportTestSuite {
 				Assert.assertTrue("<Missing startDateTime>", event.getStartDateTime() != null);
 				Assert.assertTrue("<Missing endDateTime>", event.getEndDateTime() != null);
 				Assert.assertTrue("<Missing numParticipants>", event.getNumParticipants() != null);
+				Assert.assertTrue("<Missing volunteers>", event.getVolunteers() != null);
+				Assert.assertTrue("<Volunteers should not be empty>", event.getVolunteers().size() > 0);
 				List<Volunteer> volunteers = event.getVolunteers();
 				for (Volunteer volunteer: volunteers) {
 					Assert.assertTrue("<Missing userId>", volunteer.getUserId() != null);
@@ -259,10 +271,124 @@ public class CitiHackathonReportTestSuite {
 					Assert.assertTrue("<Missing gender>", volunteer.getGender() != null);
 					Assert.assertTrue("<Missing age>", volunteer.getAge() != null);
 					Assert.assertTrue("<Missing accountType>", volunteer.getAccountType() != null);
-					Assert.assertTrue("<Missing organizerName>", event.getOrganizerName() != null);
 				}
 				Assert.assertTrue("<Missing categoryId>", event.getCategoryId() != null);
 				Assert.assertTrue("<Missing eventStatus>", event.getEventStatus() != null);
+				Assert.assertTrue("<Missing organizerName>", event.getOrganizerName() != null);
+			}
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			default:
+				Assert.assertTrue("Test Fail due to error " + e.getStatusCode(), false);
+				break;
+			}
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
+	}
+	
+	@Test
+	public void get_from_to_historical_report_for_user() {
+		String url = testUrl + "/reports/user-historical";
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		Map<String, String> params = new HashMap<>();
+		params.put("userId", "1");
+		params.put("fromDate", "2018-12-25");
+		params.put("toDate", "2019-06-07");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			builder.queryParam(entry.getKey(), entry.getValue());
+		}
+		try {
+			UserHistoricalBreakdownReport result = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, UserHistoricalBreakdownReport.class, params).getBody();
+			Assert.assertTrue("<Missing numEvents>", result.getNumEvents() != null);
+			Assert.assertTrue("<Missing totalHours>", result.getTotalHours() != null);
+			Assert.assertTrue("<Missing fromDate>", result.getFromDate() != null);
+			Assert.assertTrue("<Missing toDate>", result.getToDate() != null);
+			Assert.assertTrue("<Missing events>", result.getEvents() != null);
+			Assert.assertTrue("<Events should not be empty>", result.getEvents().size() > 0);
+			List<ReportEvent> events = result.getEvents();
+			for (ReportEvent event: events) {
+				Assert.assertTrue("<Missing eventId>", event.getEventId() != null);
+				Assert.assertTrue("<Missing eventName>", event.getEventName() != null);
+				Assert.assertTrue("<Missing startDateTime>", event.getStartDateTime() != null);
+				Assert.assertTrue("<Missing endDateTime>", event.getEndDateTime() != null);
+				Assert.assertTrue("<Missing numHours>", event.getNumHours() != null);
+				Assert.assertTrue("<Missing categoryId>", event.getCategoryId() != null);
+				Assert.assertTrue("<Missing eventStatus>", event.getEventStatus() != null);
+				Assert.assertTrue("<Missing organizerName>", event.getOrganizerName() != null);
+			}
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			default:
+				Assert.assertTrue("Test Fail due to error " + e.getStatusCode(), false);
+				break;
+			}
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
+	}
+	
+	@Test
+	public void get_empty_historical_report_for_user() {
+		String url = testUrl + "/reports/user-historical";
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		try {
+			UserHistoricalBreakdownReport result = restTemplate.exchange(url, HttpMethod.GET, entity, UserHistoricalBreakdownReport.class).getBody();
+			Assert.assertTrue("<Missing numEvents>", result.getNumEvents() != null);
+			Assert.assertTrue("<Missing totalHours>", result.getTotalHours() != null);
+			Assert.assertTrue("<Missing fromDate>", result.getFromDate() != null);
+			Assert.assertTrue("<Missing toDate>", result.getToDate() != null);
+			Assert.assertTrue("<Missing events>", result.getEvents() != null);
+			Assert.assertTrue("<Events should be empty>", result.getEvents().size() == 0);
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			default:
+				Assert.assertTrue("Test Fail due to error " + e.getStatusCode(), false);
+				break;
+			}
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
+	}
+	
+	@Test
+	public void get_all_historical_report_for_user() {
+		String url = testUrl + "/reports/user-historical";
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		Map<String, String> params = new HashMap<>();
+		params.put("userId", "1");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			builder.queryParam(entry.getKey(), entry.getValue());
+		}
+		try {
+			UserHistoricalBreakdownReport result = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, UserHistoricalBreakdownReport.class, params).getBody();
+			Assert.assertTrue("<Missing numEvents>", result.getNumEvents() != null);
+			Assert.assertTrue("<Missing totalHours>", result.getTotalHours() != null);
+			Assert.assertTrue("<Missing fromDate>", result.getFromDate() != null);
+			Assert.assertTrue("<Missing toDate>", result.getToDate() != null);
+			Assert.assertTrue("<Missing events>", result.getEvents() != null);
+			Assert.assertTrue("<Events should not be empty>", result.getEvents().size() > 0);
+			List<ReportEvent> events = result.getEvents();
+			for (ReportEvent event: events) {
+				Assert.assertTrue("<Missing eventId>", event.getEventId() != null);
+				Assert.assertTrue("<Missing eventName>", event.getEventName() != null);
+				Assert.assertTrue("<Missing startDateTime>", event.getStartDateTime() != null);
+				Assert.assertTrue("<Missing endDateTime>", event.getEndDateTime() != null);
+				Assert.assertTrue("<Missing numHours>", event.getNumHours() != null);
+				Assert.assertTrue("<Missing categoryId>", event.getCategoryId() != null);
+				Assert.assertTrue("<Missing eventStatus>", event.getEventStatus() != null);
+				Assert.assertTrue("<Missing organizerName>", event.getOrganizerName() != null);
 			}
 		} catch (HttpClientErrorException e) {
 			switch (e.getRawStatusCode()) {

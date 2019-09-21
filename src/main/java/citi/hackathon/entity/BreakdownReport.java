@@ -21,6 +21,6 @@ public class BreakdownReport {
 
 	@Override
 	public String toString() {
-		return "OrganizationBreakdownReport [events=" + events + "]";
+		return "BreakdownReport [events=" + events + "]";
 	}
 }
