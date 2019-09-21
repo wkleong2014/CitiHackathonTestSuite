@@ -2,19 +2,20 @@ package citi.hackathon.entity;
 
 import java.util.List;
 
-public class OrganizationBreakdownReport {
-	private List<Event> events;
+public class BreakdownReport {
+	private List<ReportEvent> events;
+	
+	public BreakdownReport () {}
 
-	public OrganizationBreakdownReport(List<Event> events) {
-		super();
+	public BreakdownReport(List<ReportEvent> events) {
 		this.events = events;
 	}
 
-	public List<Event> getEvents() {
+	public List<ReportEvent> getEvents() {
 		return events;
 	}
 
-	public void setEvents(List<Event> events) {
+	public void setEvents(List<ReportEvent> events) {
 		this.events = events;
 	}
 

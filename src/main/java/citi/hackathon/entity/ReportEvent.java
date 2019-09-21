@@ -2,31 +2,42 @@ package citi.hackathon.entity;
 
 import java.util.List;
 
-public class DemographicReport {
+public class ReportEvent {
 	private Integer eventId;
 	private String eventName;
 	private String startDateTime;
 	private String endDateTime;
 	private Integer numParticipants;
-	private String organizerName;
-	private Integer categoryId;
 	private List<Volunteer> volunteers;
+	private Integer categoryId;
 	private String eventStatus;
+	private String organizerName;
 	
-	public DemographicReport() {}
-	
-	public DemographicReport(Integer eventId, String eventName, String startDateTime, String endDateTime,
-			Integer numParticipants, String organizerName, Integer categoryId, List<Volunteer> volunteers, String eventStatus) {
-		super();
+	public ReportEvent() {}
+
+	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime, Integer numParticipants,
+			List<Volunteer> volunteers, Integer categoryId, String eventStatus) {
 		this.eventId = eventId;
 		this.eventName = eventName;
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		this.numParticipants = numParticipants;
-		this.organizerName = organizerName;
-		this.categoryId = categoryId;
 		this.volunteers = volunteers;
+		this.categoryId = categoryId;
 		this.eventStatus = eventStatus;
+	}
+	
+	public ReportEvent(Integer eventId, String eventName, String startDateTime, String endDateTime, Integer numParticipants,
+			List<Volunteer> volunteers, Integer categoryId, String eventStatus, String organizerName) {
+		this.eventId = eventId;
+		this.eventName = eventName;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.numParticipants = numParticipants;
+		this.volunteers = volunteers;
+		this.categoryId = categoryId;
+		this.eventStatus = eventStatus;
+		this.organizerName = organizerName;
 	}
 
 	public Integer getEventId() {
@@ -69,12 +80,12 @@ public class DemographicReport {
 		this.numParticipants = numParticipants;
 	}
 
-	public String getOrganizerName() {
-		return organizerName;
+	public List<Volunteer> getVolunteers() {
+		return volunteers;
 	}
 
-	public void setOrganizerName(String organizerName) {
-		this.organizerName = organizerName;
+	public void setVolunteers(List<Volunteer> volunteers) {
+		this.volunteers = volunteers;
 	}
 
 	public Integer getCategoryId() {
@@ -85,14 +96,6 @@ public class DemographicReport {
 		this.categoryId = categoryId;
 	}
 
-	public List<Volunteer> getVolunteers() {
-		return volunteers;
-	}
-
-	public void setVolunteers(List<Volunteer> volunteers) {
-		this.volunteers = volunteers;
-	}
-
 	public String getEventStatus() {
 		return eventStatus;
 	}
@@ -101,12 +104,19 @@ public class DemographicReport {
 		this.eventStatus = eventStatus;
 	}
 
+	public String getOrganizerName() {
+		return organizerName;
+	}
+
+	public void setOrganizerName(String organizerName) {
+		this.organizerName = organizerName;
+	}
+
 	@Override
 	public String toString() {
-		return "DemographicReport [eventId=" + eventId + ", eventName=" + eventName + ", startDateTime=" + startDateTime
-				+ ", endDateTime=" + endDateTime + ", numParticipants=" + numParticipants + ", organizerName="
-				+ organizerName + ", categoryId=" + categoryId + ", volunteers=" + volunteers + ", eventStatus="
-				+ eventStatus + "]";
+		return "Event [eventId=" + eventId + ", eventName=" + eventName + ", startDateTime=" + startDateTime
+				+ ", endDateTime=" + endDateTime + ", numParticipants=" + numParticipants + ", volunteers=" + volunteers
+				+ ", categoryId=" + categoryId + ", eventStatus=" + eventStatus + ", organizerName=" + organizerName
+				+ "]";
 	}
-	
 }

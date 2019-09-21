@@ -269,6 +269,7 @@ public class CitiHackathonAuthenticationTestSuite {
 		}
 		try {
 			ResponseEntity<Account> result = restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entity, Account.class, params);
+			Assert.assertEquals(500, result.getStatusCodeValue());
 		} catch (HttpClientErrorException e) {
 			switch (e.getRawStatusCode()) {
 			case 404:
@@ -330,6 +331,7 @@ public class CitiHackathonAuthenticationTestSuite {
 		}
 		try {
 			ResponseEntity<Account> result = restTemplate.exchange(builder.toUriString(), HttpMethod.PATCH, entity, Account.class, params);
+			Assert.assertEquals(500, result.getStatusCodeValue());
 		} catch (HttpClientErrorException e) {
 			switch (e.getRawStatusCode()) {
 			case 404:
@@ -374,6 +376,35 @@ public class CitiHackathonAuthenticationTestSuite {
 	}
 	
 	@Test
+	public void delete_invalid_account() {
+		String url = testUrl + "/accounts";
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
+		Map<String, String> params = new HashMap<>();
+		params.put("userId", "-100");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			builder.queryParam(entry.getKey(), entry.getValue());
+		}
+		try {
+			ResponseEntity<ResultString> result = restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, entity, ResultString.class, params);
+			Assert.assertEquals(500, result.getStatusCodeValue());
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			default:
+				Assert.assertTrue("Test Fail due to error " + e.getStatusCode(), false);
+				break;
+			}
+		} catch (HttpServerErrorException e) {
+			Assert.assertEquals("Expecting Internal Server Error 500", 500, e.getRawStatusCode());
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
+	}
+	
+	@Test
 	public void reset_account_password() {
 		String url = testUrl + "/accounts/reset-password";
 		ResetPassword requestBody = new ResetPassword("peter", "peter_johnson@email.com");
@@ -396,6 +427,36 @@ public class CitiHackathonAuthenticationTestSuite {
 				Assert.assertTrue("Test Fail due to error " + e.getStatusCode(), false);
 				break;
 			}
+		} catch (Exception e) {
+			Assert.assertTrue("Test Fail due to exception: " + e, false);
+		}
+	}
+	
+	@Test
+	public void reset_invalid_account_password() {
+		String url = testUrl + "/accounts/reset-password";
+		ResetPassword requestBody = new ResetPassword("peter", "peter_johnson@email.com");
+		HttpEntity<ResetPassword> entity = new HttpEntity<ResetPassword>(requestBody, headers);
+		Map<String, String> params = new HashMap<>();
+		params.put("userId", "-100");
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			builder.queryParam(entry.getKey(), entry.getValue());
+		}
+		try {
+			ResponseEntity<ResultString> result = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, ResultString.class, params);
+			Assert.assertEquals(500, result.getStatusCodeValue());
+		} catch (HttpClientErrorException e) {
+			switch (e.getRawStatusCode()) {
+			case 404:
+				Assert.assertTrue("Invalid Endpoint", false);
+				break;
+			default:
+				Assert.assertTrue("Test Fail due to error " + e.getStatusCode(), false);
+				break;
+			}
+		} catch (HttpServerErrorException e) {
+			Assert.assertEquals("Expecting Internal Server Error 500", 500, e.getRawStatusCode());
 		} catch (Exception e) {
 			Assert.assertTrue("Test Fail due to exception: " + e, false);
 		}
