@@ -5,14 +5,31 @@ public class Event {
 	private String eventName;
 	private String startDateTime;
 	private String endDateTime;
+	private Integer numParticipants;
 	private String organizerName;
 	private Integer categoryId;
 	private String description;
 	private Integer maxParticipants;
 	private Integer minParticipants;
 	private String eventStatus;
-	
-	public Event() {}
+
+	public Event() {
+	}
+
+	public Event(Integer eventId, String eventName, String startDateTime, String endDateTime, Integer numParticipants,
+			String organizerName, Integer categoryId, String description, Integer maxParticipants,
+			Integer minParticipants, String eventStatus) {
+		this.eventId = eventId;
+		this.eventName = eventName;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.organizerName = organizerName;
+		this.categoryId = categoryId;
+		this.description = description;
+		this.maxParticipants = maxParticipants;
+		this.minParticipants = minParticipants;
+		this.eventStatus = eventStatus;
+	}
 
 	public Event(Integer eventId, String eventName, String startDateTime, String endDateTime, String organizerName,
 			Integer categoryId, String description, Integer maxParticipants, Integer minParticipants,
@@ -59,6 +76,14 @@ public class Event {
 
 	public void setEndDateTime(String endDateTime) {
 		this.endDateTime = endDateTime;
+	}
+
+	public Integer getNumParticipants() {
+		return numParticipants;
+	}
+
+	public void setNumParticipants(Integer numParticipants) {
+		this.numParticipants = numParticipants;
 	}
 
 	public String getOrganizerName() {
@@ -115,5 +140,5 @@ public class Event {
 				+ ", endDateTime=" + endDateTime + ", organizerName=" + organizerName + ", categoryId=" + categoryId
 				+ ", description=" + description + ", maxParticipants=" + maxParticipants + ", minParticipants="
 				+ minParticipants + ", eventStatus=" + eventStatus + "]";
-	} 
+	}
 }

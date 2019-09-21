@@ -1,6 +1,6 @@
 package citi.hackathon.entity;
 
-public class CreateEventRequestBody {
+public class EventRequestBody {
 	private String eventName;
 	private String startDateTime;
 	private String endDateTime;
@@ -11,9 +11,9 @@ public class CreateEventRequestBody {
 	private Integer minParticipants;
 	private String eventStatus;
 	
-	public CreateEventRequestBody() {}
+	public EventRequestBody() {}
 
-	public CreateEventRequestBody(String eventName, String startDateTime, String endDateTime, String organizerName,
+	public EventRequestBody(String eventName, String startDateTime, String endDateTime, String organizerName,
 			Integer categoryId, String description, Integer maxParticipants, Integer minParticipants,
 			String eventStatus) {
 		this.eventName = eventName;

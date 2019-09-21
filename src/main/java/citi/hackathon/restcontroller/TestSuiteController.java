@@ -1,6 +1,5 @@
 package citi.hackathon.restcontroller;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,18 +26,27 @@ import citi.hackathon.CitiHackathonEventTestSuite;
 import citi.hackathon.CitiHackathonReportTestSuite;
 import citi.hackathon.config.SpringConfig;
 import citi.hackathon.entity.Account;
+import citi.hackathon.entity.AddVolunteer;
+import citi.hackathon.entity.AllEvents;
+import citi.hackathon.entity.BreakdownReport;
+import citi.hackathon.entity.Category;
+import citi.hackathon.entity.CategoryArray;
+import citi.hackathon.entity.CategoryRequestBody;
+import citi.hackathon.entity.CreateAccountRequestBody;
 import citi.hackathon.entity.DemographicReport;
 import citi.hackathon.entity.Event;
-import citi.hackathon.entity.ReportEvent;
+import citi.hackathon.entity.EventRequestBody;
+import citi.hackathon.entity.Feedback;
+import citi.hackathon.entity.FeedbackArray;
+import citi.hackathon.entity.FeedbackRequestBody;
 import citi.hackathon.entity.JunitReport;
-import citi.hackathon.entity.BreakdownReport;
-import citi.hackathon.entity.CreateAccountRequestBody;
-import citi.hackathon.entity.CreateEventRequestBody;
+import citi.hackathon.entity.ReportEvent;
 import citi.hackathon.entity.ResetPassword;
 import citi.hackathon.entity.ResultString;
 import citi.hackathon.entity.UpdateAccount;
 import citi.hackathon.entity.UserHistoricalBreakdownReport;
 import citi.hackathon.entity.Volunteer;
+import citi.hackathon.entity.VolunteerRequestBody;
 
 @RestController
 public class TestSuiteController {
@@ -287,14 +295,14 @@ public class TestSuiteController {
 	}
 
 	@PostMapping("/events")
-	public Event create_event(@RequestBody CreateEventRequestBody request) {
+	public Event create_event(@RequestBody EventRequestBody request) {
 		Event event = new Event(1002, request.getEventName(), request.getStartDateTime(), request.getEndDateTime(),
 				request.getOrganizerName(), request.getCategoryId(), request.getDescription(),
 				request.getMaxParticipants(), request.getMinParticipants(), request.getEventStatus());
 		LOG.info("Create Event: " + event.toString());
 		return event;
 	}
-	
+
 	@DeleteMapping("/events")
 	public ResponseEntity<ResultString> delete_event(@RequestParam("eventId") Integer eventId) {
 		LOG.info("Deleted Event Id: " + eventId);
@@ -302,6 +310,167 @@ public class TestSuiteController {
 			return new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<ResultString>(new ResultString("Event Deleted"), HttpStatus.OK);
+	}
+
+	@GetMapping("/events")
+	public ResponseEntity get_event(@RequestParam(value = "eventId", required = false) Integer eventId,
+			@RequestParam(value = "search", required = false) String search,
+			@RequestParam(value = "from_time", required = false) String fromTime,
+			@RequestParam(value = "to_time", required = false) String toTime,
+			@RequestParam(value = "categoryId", required = false) Integer categoryId) {
+		ResponseEntity response = null;
+		if (eventId == null && fromTime == null && toTime == null && search == null && categoryId == null) {
+			List<Event> events = new ArrayList<>();
+			events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", "SPCA",
+					1, "Dog event", 50, 10, "open"));
+			events.add(new Event(1003, "National Day", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", "NDP", 1,
+					"National Day event", 50, 10, "open"));
+			AllEvents allEvent = new AllEvents(events);
+			response = new ResponseEntity<AllEvents>(allEvent, HttpStatus.OK);
+			LOG.info("Returning Event: " + allEvent.toString());
+		} else if (fromTime == null && toTime == null && search == null && categoryId == null && eventId != null
+				&& eventId < 0) {
+			response = new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} else if (fromTime == null && toTime == null && search == null && categoryId == null && eventId != null
+				&& eventId >= 0) {
+			response = new ResponseEntity<Event>(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z",
+					"2018-12-28T12:00:00Z", "SPCA", 1, "Dog event", 50, 10, "open"), HttpStatus.OK);
+			LOG.info("Returning Event: " + response.getBody().toString());
+		}
+
+		if (search != null && fromTime == null && toTime == null && categoryId == null && eventId == null) {
+			List<Event> events = new ArrayList<>();
+			events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4,
+					"SPCA", 1, "Dog event", 50, 10, "open"));
+			events.add(new Event(1003, "Dog Shelter Cleaning 2", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4,
+					"SPCA", 1, "Dog event Round 2", 50, 10, "open"));
+			AllEvents allEvent = new AllEvents(events);
+			response = new ResponseEntity<AllEvents>(allEvent, HttpStatus.OK);
+			LOG.info("Returning Search Events: " + allEvent.toString());
+		}
+
+		if (fromTime != null && toTime != null && search == null && categoryId == null && eventId == null) {
+			List<Event> events = new ArrayList<>();
+			events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4,
+					"SPCA", 1, "Dog event", 50, 10, "open"));
+			events.add(new Event(1003, "Dog Shelter Cleaning 2", "2018-12-28T10:00:00Z", "2018-12-29T12:00:00Z", 4,
+					"SPCA", 1, "Dog event", 50, 10, "open"));
+			AllEvents allEvent = new AllEvents(events);
+			response = new ResponseEntity<AllEvents>(allEvent, HttpStatus.OK);
+			LOG.info("Returning Time Searched Events: " + allEvent.toString());
+		}
+
+		if (categoryId != null && fromTime == null && toTime == null && search == null && eventId == null) {
+			List<Event> events = new ArrayList<>();
+			events.add(new Event(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z", "2018-12-28T12:00:00Z", 4,
+					"SPCA", 1, "Dog event", 50, 10, "open"));
+			events.add(new Event(1003, "Dog Shelter Cleaning 2", "2018-12-28T10:00:00Z", "2018-12-29T12:00:00Z", 4,
+					"SPCA", 1, "Dog event", 50, 10, "open"));
+			AllEvents allEvent = new AllEvents(events);
+			response = new ResponseEntity<AllEvents>(allEvent, HttpStatus.OK);
+			LOG.info("Returning Category Searched Events: " + allEvent.toString());
+		}
+
+		if (response == null) {
+			response = new ResponseEntity<ResultString>(HttpStatus.BAD_REQUEST);
+		}
+		return response;
+	}
+
+	@PutMapping("/events")
+	public ResponseEntity<Event> update_event(@RequestParam("eventId") Integer eventId,
+			@RequestBody EventRequestBody request) {
+		if (eventId < 0) {
+			return new ResponseEntity<Event>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		Event event = new Event(1002, request.getEventName(), request.getStartDateTime(), request.getEndDateTime(),
+				request.getOrganizerName(), request.getCategoryId(), request.getDescription(),
+				request.getMaxParticipants(), request.getMinParticipants(), request.getEventStatus());
+		LOG.info("Update Event: " + event.toString());
+		return new ResponseEntity<Event>(event, HttpStatus.OK);
+	}
+
+	@PostMapping("/categories")
+	public Category create_category(@RequestBody CategoryRequestBody request) {
+		Category category = new Category(1, request.getCategory());
+		LOG.info("Create Category: " + category.toString());
+		return category;
+	}
+
+	@GetMapping("/categories")
+	public CategoryArray get_categories() {
+		List<Category> categories = new ArrayList<>();
+		categories.add(new Category(1, "Animals"));
+		categories.add(new Category(2, "Environment"));
+		CategoryArray categoriesArray = new CategoryArray(categories);
+		return categoriesArray;
+	}
+
+	@PutMapping("/categories")
+	public ResponseEntity<Category> update_categories(@RequestParam("categoryId") Integer categoryId,
+			@RequestBody CategoryRequestBody request) {
+		if (categoryId < 0) {
+			return new ResponseEntity<Category>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		Category category = new Category(1, request.getCategory());
+		LOG.info("Update Category: " + category.toString());
+		return new ResponseEntity<Category>(category, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/categories")
+	public ResponseEntity<ResultString> delete_category(@RequestParam("categoryId") Integer categoryId) {
+		LOG.info("Deleted Category Id: " + categoryId);
+		if (categoryId < 0) {
+			return new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<ResultString>(new ResultString("Category deleted"), HttpStatus.OK);
+	}
+
+	@PostMapping("/events/volunteer")
+	public ResponseEntity add_volunteer(@RequestParam("eventId") Integer eventId,
+			@RequestBody VolunteerRequestBody request) {
+		AddVolunteer volunteer = new AddVolunteer(request.getUserId(), eventId, "registered");
+		if (eventId < 0) {
+			return new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		LOG.info("Create Volunteer: " + volunteer.toString());
+		return new ResponseEntity<AddVolunteer>(volunteer, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/events/volunteer")
+	public ResponseEntity<ResultString> remove_volunteer(@RequestParam("eventId") Integer eventId,
+			@RequestBody VolunteerRequestBody requestBody) {
+		LOG.info("Deleted User Id [{}] for eventId [{}]", requestBody.getUserId(), eventId);
+		if (eventId < 0) {
+			return new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<ResultString>(new ResultString("Volunteer withdraw from event"), HttpStatus.OK);
+	}
+
+	@PostMapping("/events/feedbacks")
+	public ResponseEntity create_feedback(@RequestParam("eventId") Integer eventId,
+			@RequestBody FeedbackRequestBody requestBody) {
+		Feedback feedback = new Feedback(1, requestBody.getUserId(), eventId, requestBody.getFeedback());
+		if (eventId < 0) {
+			return new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		LOG.info("Create Feedback: " + feedback.toString());
+		return new ResponseEntity<Feedback>(feedback, HttpStatus.OK);
+	}
+
+	@GetMapping("/events/feedbacks")
+	public ResponseEntity get_feedback(@RequestParam("eventId") Integer eventId,
+			@RequestParam(value = "feedbackId", required = false) Integer feedbackId) {
+		ResponseEntity response = null;
+		if (feedbackId == null) {
+			List<Feedback> feedbacks = new ArrayList<>();
+			feedbacks.add(new Feedback(1, 2, eventId, "This event was a blast!"));
+			feedbacks.add(new Feedback(2, 3, eventId, "Awesome event!"));
+			response = new ResponseEntity(new FeedbackArray(eventId, feedbacks), HttpStatus.OK);
+		} else {
+			response = new ResponseEntity(new Feedback(feedbackId, 2, eventId, "This event was a blast!"), HttpStatus.OK);
+		}
+		return response;
 	}
 
 }
