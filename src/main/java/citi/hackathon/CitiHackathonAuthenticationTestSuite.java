@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import citi.hackathon.config.SpringConfig;
 import citi.hackathon.entity.Account;
+import citi.hackathon.entity.CreateAccountRequestBody;
 import citi.hackathon.entity.ResetPassword;
 import citi.hackathon.entity.ResultString;
 import citi.hackathon.entity.UpdateAccount;
@@ -45,25 +46,12 @@ public class CitiHackathonAuthenticationTestSuite {
 	@Test
 	public void create_admin_account() {
 		String url = testUrl + "/accounts";
-		Account expected = new Account(1, "admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin_nimda@email.com",
+		CreateAccountRequestBody requestBody = new CreateAccountRequestBody("admin", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "admin", "admin_nimda@email.com",
 				"Admin", "Nimda", "Male", 33);
-		HttpEntity<String> entity = new HttpEntity<String>(headers);
-		Map<String, String> params = new HashMap<>();
-		params.put("username", expected.getUsername());
-		params.put("password", expected.getPassword());
-		params.put("accountType", expected.getAccountType());
-		params.put("emailAddress", expected.getEmailAddress());
-		params.put("firstName", expected.getFirstName());
-		params.put("lastName", expected.getLastName());
-		params.put("gender", expected.getGender());
-		params.put("age", "" + expected.getAge());
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-		for (Map.Entry<String, String> entry : params.entrySet()) {
-			builder.queryParam(entry.getKey(), entry.getValue());
-		}
+		HttpEntity<CreateAccountRequestBody> entity = new HttpEntity<CreateAccountRequestBody>(requestBody, headers);
 		try {
 			Account result = restTemplate
-					.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params).getBody();
+					.exchange(url, HttpMethod.POST, entity, Account.class).getBody();
 			assertAccount(result);
 		} catch (HttpClientErrorException e) {
 			switch (e.getRawStatusCode()) {
@@ -82,25 +70,12 @@ public class CitiHackathonAuthenticationTestSuite {
 	@Test
 	public void create_user_account() {
 		String url = testUrl + "/accounts";
-		Account expected = new Account(2, "peter", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "user",
-				"peter_johnson@email.com", "Peter", "Johnson", "Male", 33);
-		HttpEntity<String> entity = new HttpEntity<String>(headers);
-		Map<String, String> params = new HashMap<>();
-		params.put("username", expected.getUsername());
-		params.put("password", expected.getPassword());
-		params.put("accountType", expected.getAccountType());
-		params.put("emailAddress", expected.getEmailAddress());
-		params.put("firstName", expected.getFirstName());
-		params.put("lastName", expected.getLastName());
-		params.put("gender", expected.getGender());
-		params.put("age", "" + expected.getAge());
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-		for (Map.Entry<String, String> entry : params.entrySet()) {
-			builder.queryParam(entry.getKey(), entry.getValue());
-		}
+		CreateAccountRequestBody requestBody = new CreateAccountRequestBody("peter", "47b7bfb65fa83ac9a71dcb0f6296bb6e", "user", "peter_johnson@email.com",
+				"Peter", "Johnson", "Male", 33);
+		HttpEntity<CreateAccountRequestBody> entity = new HttpEntity<CreateAccountRequestBody>(requestBody, headers);
 		try {
 			Account result = restTemplate
-					.exchange(builder.toUriString(), HttpMethod.POST, entity, Account.class, params).getBody();
+					.exchange(url, HttpMethod.POST, entity, Account.class).getBody();
 			assertAccount(result);
 		} catch (HttpClientErrorException e) {
 			switch (e.getRawStatusCode()) {

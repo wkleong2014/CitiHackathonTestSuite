@@ -28,9 +28,12 @@ import citi.hackathon.CitiHackathonReportTestSuite;
 import citi.hackathon.config.SpringConfig;
 import citi.hackathon.entity.Account;
 import citi.hackathon.entity.DemographicReport;
+import citi.hackathon.entity.Event;
 import citi.hackathon.entity.ReportEvent;
 import citi.hackathon.entity.JunitReport;
 import citi.hackathon.entity.BreakdownReport;
+import citi.hackathon.entity.CreateAccountRequestBody;
+import citi.hackathon.entity.CreateEventRequestBody;
 import citi.hackathon.entity.ResetPassword;
 import citi.hackathon.entity.ResultString;
 import citi.hackathon.entity.UpdateAccount;
@@ -100,15 +103,16 @@ public class TestSuiteController {
 	}
 
 	@PostMapping("/accounts")
-	public Account create_account(@RequestParam("username") String username, @RequestParam("password") String password,
-			@RequestParam("accountType") String accountType, @RequestParam("emailAddress") String emailAddress,
-			@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
-			@RequestParam("gender") String gender, @RequestParam("age") Integer age) {
+	public Account create_account(@RequestBody CreateAccountRequestBody request) {
 		Account account = null;
-		if ("admin".equals(accountType)) {
-			account = new Account(1, username, password, accountType, emailAddress, firstName, lastName, gender, age);
+		if ("admin".equals(request.getAccountType())) {
+			account = new Account(1, request.getUsername(), request.getPassword(), request.getAccountType(),
+					request.getEmailAddress(), request.getFirstName(), request.getLastName(), request.getGender(),
+					request.getAge());
 		} else {
-			account = new Account(2, username, password, accountType, emailAddress, firstName, lastName, gender, age);
+			account = new Account(2, request.getUsername(), request.getPassword(), request.getAccountType(),
+					request.getEmailAddress(), request.getFirstName(), request.getLastName(), request.getGender(),
+					request.getAge());
 		}
 		LOG.info("Create Account: " + account.toString());
 		return account;
@@ -239,7 +243,8 @@ public class TestSuiteController {
 			events.add(new ReportEvent(1003, "Beach Cleaning", "2019-01-02T01:00:00Z", "2019-01-02T04:00:00Z", 4,
 					volunteers, 2, "open", "NEA"));
 			historicalBreakdownReport = new BreakdownReport(events);
-			LOG.info("Returning from {} to {} Admin Historical Breakdown Report: " + historicalBreakdownReport.toString());
+			LOG.info("Returning from {} to {} Admin Historical Breakdown Report: "
+					+ historicalBreakdownReport.toString());
 		}
 		return new ResponseEntity<BreakdownReport>(historicalBreakdownReport, HttpStatus.OK);
 	}
@@ -260,11 +265,12 @@ public class TestSuiteController {
 					"2018-12-28T12:00:00Z", 2, "SPCA", 1, "closed"));
 			reportEvents.add(new ReportEvent(1005, "Walk the Talk, Walk the Dogs", "2019-08-02T01:00:00Z",
 					"2019-08-02T04:00:00Z", 3, "SPCA", 1, "open"));
-			reportEvents.add(new ReportEvent(1004, "Zoo Outing", "2019-07-02T01:00:00Z",
-					"2019-07-02T08:00:00Z", 7, "YMCA", 3, "open"));
+			reportEvents.add(new ReportEvent(1004, "Zoo Outing", "2019-07-02T01:00:00Z", "2019-07-02T08:00:00Z", 7,
+					"YMCA", 3, "open"));
 			userHistoricalBreakdownReport = new UserHistoricalBreakdownReport(2, 5, "2018-12-25", "2019-08-07",
 					reportEvents);
-			LOG.info("Returning all of userId [{}] historical report: " + userHistoricalBreakdownReport.toString(), userId);
+			LOG.info("Returning all of userId [{}] historical report: " + userHistoricalBreakdownReport.toString(),
+					userId);
 		} else {
 			List<ReportEvent> reportEvents = new ArrayList<ReportEvent>();
 			reportEvents.add(new ReportEvent(1002, "Dog Shelter Cleaning", "2018-12-28T10:00:00Z",
@@ -273,9 +279,29 @@ public class TestSuiteController {
 					"2019-08-02T04:00:00Z", 3, "SPCA", 1, "closed"));
 			userHistoricalBreakdownReport = new UserHistoricalBreakdownReport(2, 5, "2018-12-25", "2019-08-07",
 					reportEvents);
-			LOG.info("Returning userId [{}] from {} to {} historical report:" + userHistoricalBreakdownReport.toString(), userId, fromDate, toDate);
+			LOG.info(
+					"Returning userId [{}] from {} to {} historical report:" + userHistoricalBreakdownReport.toString(),
+					userId, fromDate, toDate);
 		}
 		return new ResponseEntity<UserHistoricalBreakdownReport>(userHistoricalBreakdownReport, HttpStatus.OK);
+	}
+
+	@PostMapping("/events")
+	public Event create_event(@RequestBody CreateEventRequestBody request) {
+		Event event = new Event(1002, request.getEventName(), request.getStartDateTime(), request.getEndDateTime(),
+				request.getOrganizerName(), request.getCategoryId(), request.getDescription(),
+				request.getMaxParticipants(), request.getMinParticipants(), request.getEventStatus());
+		LOG.info("Create Event: " + event.toString());
+		return event;
+	}
+	
+	@DeleteMapping("/events")
+	public ResponseEntity<ResultString> delete_event(@RequestParam("eventId") Integer eventId) {
+		LOG.info("Deleted Event Id: " + eventId);
+		if (eventId < 0) {
+			return new ResponseEntity<ResultString>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<ResultString>(new ResultString("Event Deleted"), HttpStatus.OK);
 	}
 
 }
