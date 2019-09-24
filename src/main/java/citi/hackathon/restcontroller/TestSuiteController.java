@@ -1,5 +1,10 @@
 package citi.hackathon.restcontroller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +65,22 @@ public class TestSuiteController {
 		JunitReport report = new JunitReport(result.getRunCount(), result.getFailureCount(),
 				result.getRunCount() - result.getFailureCount() - result.getIgnoreCount(), result.getFailures());
 		LOG.info(report.toString());
+		try {
+			String command = "curl -X PATCH -H \"Content-Type: application/json\" -d "
+					+ "\"{\\\"fields\\\": {\\\"runCount\\\": {\\\"stringValue\\\": \\\""+ report.getRunCount() +"\\\"},\\\"failureCount\\\": {\\\"stringValue\\\": \\\"" + report.getFailureCount() + "\\\"},\\\"successCount\\\": {\\\"stringValue\\\": \\\"" + report.getSuccessCount() + "\\\"},\\\"testUrl\\\": {\\\"stringValue\\\": \\\"" + url + "\\\"},\\\"timestamp\\\": {\\\"stringValue\\\": \\\"" + Instant.now() + "\\\"},\\\"component\\\": {\\\"stringValue\\\": \\\"Authentication\\\"}}}\""
+					+ " https://firestore.googleapis.com/v1/projects/citihackathontestingui/databases/(default)/documents/report/authentication-report-" + SpringConfig.incrementAuthenticationCount() +"?alt=json";
+			Process process = Runtime.getRuntime().exec(command);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			String output = "";
+			while ((line = reader.readLine()) != null) {
+                output += line;
+            }
+			LOG.info("Curl Response: [{}]", output);
+			process.destroy();
+		} catch (IOException e) {
+			LOG.error("Exception when running curl command: {}", e);
+		}
 		return report;
 	}
 
@@ -71,6 +92,22 @@ public class TestSuiteController {
 		JunitReport report = new JunitReport(result.getRunCount(), result.getFailureCount(),
 				result.getRunCount() - result.getFailureCount() - result.getIgnoreCount(), result.getFailures());
 		LOG.info(report.toString());
+		try {
+			String command = "curl -X PATCH -H \"Content-Type: application/json\" -d "
+					+ "\"{\\\"fields\\\": {\\\"runCount\\\": {\\\"stringValue\\\": \\\""+ report.getRunCount() +"\\\"},\\\"failureCount\\\": {\\\"stringValue\\\": \\\"" + report.getFailureCount() + "\\\"},\\\"successCount\\\": {\\\"stringValue\\\": \\\"" + report.getSuccessCount() + "\\\"},\\\"testUrl\\\": {\\\"stringValue\\\": \\\"" + url + "\\\"},\\\"timestamp\\\": {\\\"stringValue\\\": \\\"" + Instant.now() + "\\\"},\\\"component\\\": {\\\"stringValue\\\": \\\"Event\\\"}}}\""
+					+ " https://firestore.googleapis.com/v1/projects/citihackathontestingui/databases/(default)/documents/report/event-report-" + SpringConfig.incrementEventCount() +"?alt=json";
+			Process process = Runtime.getRuntime().exec(command);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			String output = "";
+			while ((line = reader.readLine()) != null) {
+                output += line;
+            }
+			LOG.info("Curl Response: [{}]", output);
+			process.destroy();
+		} catch (IOException e) {
+			LOG.error("Exception when running curl command: {}", e);
+		}
 		return report;
 	}
 
@@ -82,6 +119,22 @@ public class TestSuiteController {
 		JunitReport report = new JunitReport(result.getRunCount(), result.getFailureCount(),
 				result.getRunCount() - result.getFailureCount() - result.getIgnoreCount(), result.getFailures());
 		LOG.info(report.toString());
+		try {
+			String command = "curl -X PATCH -H \"Content-Type: application/json\" -d "
+					+ "\"{\\\"fields\\\": {\\\"runCount\\\": {\\\"stringValue\\\": \\\""+ report.getRunCount() +"\\\"},\\\"failureCount\\\": {\\\"stringValue\\\": \\\"" + report.getFailureCount() + "\\\"},\\\"successCount\\\": {\\\"stringValue\\\": \\\"" + report.getSuccessCount() + "\\\"},\\\"testUrl\\\": {\\\"stringValue\\\": \\\"" + url + "\\\"},\\\"timestamp\\\": {\\\"stringValue\\\": \\\"" + Instant.now() + "\\\"},\\\"component\\\": {\\\"stringValue\\\": \\\"Reporter\\\"}}}\""
+					+ " https://firestore.googleapis.com/v1/projects/citihackathontestingui/databases/(default)/documents/report/reporter-report-" + SpringConfig.incrementReportCount() +"?alt=json";
+			Process process = Runtime.getRuntime().exec(command);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			String output = "";
+			while ((line = reader.readLine()) != null) {
+                output += line;
+            }
+			LOG.info("Curl Response: [{}]", output);
+			process.destroy();
+		} catch (IOException e) {
+			LOG.error("Exception when running curl command: {}", e);
+		}
 		return report;
 	}
 
@@ -93,6 +146,22 @@ public class TestSuiteController {
 		JunitReport report = new JunitReport(result.getRunCount(), result.getFailureCount(),
 				result.getRunCount() - result.getFailureCount() - result.getIgnoreCount(), result.getFailures());
 		LOG.info(report.toString());
+		try {
+			String command = "curl -X PATCH -H \"Content-Type: application/json\" -d "
+					+ "\"{\\\"fields\\\": {\\\"runCount\\\": {\\\"stringValue\\\": \\\""+ report.getRunCount() +"\\\"},\\\"failureCount\\\": {\\\"stringValue\\\": \\\"" + report.getFailureCount() + "\\\"},\\\"successCount\\\": {\\\"stringValue\\\": \\\"" + report.getSuccessCount() + "\\\"},\\\"testUrl\\\": {\\\"stringValue\\\": \\\"" + url + "\\\"},\\\"timestamp\\\": {\\\"stringValue\\\": \\\"" + Instant.now() + "\\\"},\\\"component\\\": {\\\"stringValue\\\": \\\"Communicator\\\"}}}\""
+					+ " https://firestore.googleapis.com/v1/projects/citihackathontestingui/databases/(default)/documents/report/communicator-report-" + SpringConfig.incrementCommunicationCount() +"?alt=json";
+			Process process = Runtime.getRuntime().exec(command);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			String output = "";
+			while ((line = reader.readLine()) != null) {
+                output += line;
+            }
+			LOG.info("Curl Response: [{}]", output);
+			process.destroy();
+		} catch (IOException e) {
+			LOG.error("Exception when running curl command: {}", e);
+		}
 		return report;
 	}
 
